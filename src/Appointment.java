@@ -7,6 +7,13 @@ public class Appointment {
     private int hour;
     private boolean isEmergency;
 
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
     public Appointment(Doctor doctor, Patient patient, int hour, int minute) {
         this.doctor = doctor;
         this.patient = patient;

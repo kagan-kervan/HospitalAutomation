@@ -35,27 +35,33 @@ class Doctor extends Person {
     }
 
     public void StartAppointment(Patient P) {
-        String result = medicalExamination(P);
+        AnalysisResult result = medicalExamination(P);
         if (result != null) {
             // Hastalık var, teşhis koy ve reçete yaz
-            Disease disease = new Disease(result);
-            setDiagnosis(P, disease);
-            writePrescription(disease,P);
-            if (disease.isImportant())
+            setDiagnosis(P, result);
+            writePrescription(P);
+            Disease[] diseases = P.getDiseases();
+            boolean puttingUpFlag = false;
+            for (int i = 0; i < diseases.length; i++)
             {
-                puttingThePatient(P);
+                if (diseases[i]!=null && diseases[i].isImportant())
+                {
+                    puttingThePatient(P);
+                    puttingUpFlag = true;
+                    break;
+                }
             }
-            else {
+            if(!puttingUpFlag)
                 discharge(P);
-            }
         } else {
             // Hastalık yok, taburcu et
             discharge(P);
         }
     }
 
-    public String medicalExamination(Patient P) {
+    public AnalysisResult medicalExamination(Patient P) {
         LinkedList<Double> results = getResults(P);
+        AnalysisResult result = new AnalysisResult(P);
         int counter = 0;
         while (!results.isEmpty())
         {
@@ -64,32 +70,40 @@ class Doctor extends Person {
             {
                 case 0:
                     if (patientData>h1n1_parameter)
-                        return "Flu";
+                        result.setH1n1(true);
+                    break;
                 case 1:
                     if (patientData>rhinovirus_parameter)
-                        return "Cold";
+                        result.setRhinovirus(true);
+                    break;
                 case 2:
                     if(patientData>sars_cov_parameter)
-                        return "Coronavirus";
+                        result.setSarscov2(true);
+                    break;
                 case 3:
                     if(patientData > insulin_parameter)
-                        return "Diabetes";
+                        result.setInsuline(true);
+                    break;
                 case 4:
                     if (patientData> pressure_parameter)
-                        return "High Blood Pressure";
+                        result.setBloodpres(true);
+                    break;
                 case 5:
                     if(patientData > ecoli_parameter)
-                        return "Diarrhea";
+                        result.setEscColi(true);
+                    break;
                 case 6:
                     if(patientData > tetani_parameter)
-                        return "Tetanus";
+                        result.setClostTetani(true);
+                    break;
                 case 7:
                     if(patientData > hiv_parameter)
-                        return "AIDS";
+                        result.setHiv(true);
+                    break;
             }
             counter ++;
         }
-        return null;
+        return result;
     }
 
     public LinkedList<Double> getResults(Patient P) {
@@ -98,13 +112,50 @@ class Doctor extends Person {
         return results;
     }
 
-    public void setDiagnosis(Patient P, Disease disease) {
-        P.setDisease(disease);
+    public void setDiagnosis(Patient P, AnalysisResult result)
+    {
+        int count = 0;
+        if(result.isH1n1())
+        {
+            Disease d = new Disease("Flu");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isRhinovirus())
+        {
+            Disease d = new Disease("Cold");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if (result.isBloodpres()){
+            Disease d = new Disease("High Blood Pressure");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isHiv()){
+            Disease d = new Disease("AIDS");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isInsuline()){
+            Disease d = new Disease("Diabetes");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isClostTetani())
+        {
+            Disease d = new Disease("Tetanus");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isEscColi()){
+            Disease d = new Disease("Diarrhea");
+            count = P.AddDiseaseToArray(d,count);
+        }
+        if(result.isSarscov2())
+        {
+            Disease d = new Disease("Coronavirus");
+            count = P.AddDiseaseToArray(d,count);
+        }
     }
 
-    public void writePrescription(Disease disease, Patient P) {
+    public void writePrescription(Patient P) {
         // Belirli bir hastaya reçete yaz
-        MedicalPrescription prescription = new MedicalPrescription(disease);
+        MedicalPrescription prescription = new MedicalPrescription(P.getDiseases());
         P.setMedPrescription(prescription);
         // ... (Reçete yazma işlemi)
     }
@@ -115,14 +166,9 @@ class Doctor extends Person {
     }
 
     public void discharge(Patient P) {
-        // Hasta taburcu edildi
+        P.setTreated(true);
         // ... (Taburcu işlemi)
     }
 }
 
-
-
-
-
-// ... (Diğer reçete bilgileri ve metotları)
 

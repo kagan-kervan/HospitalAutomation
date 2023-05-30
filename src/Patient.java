@@ -8,6 +8,7 @@ public class Patient extends Person {
                    int id,Phone p) {
         super(name, surname, height, weight, age, gender, bloodType, id,p);
         Random r = new Random();
+        diseases = new Disease[8];
         h1n1 = r.nextDouble(13,19);
         rhinovirus = r.nextDouble(15,21);
         sars_cov2 = r.nextDouble(18,24);
@@ -20,7 +21,7 @@ public class Patient extends Person {
     }
 
     private Appointment appointment;
-    private Disease disease;
+    private Disease[] diseases;
     private MedicalPrescription medPrescription;
     private boolean isTreated;
 
@@ -28,13 +29,12 @@ public class Patient extends Person {
         return appointment;
     }
 
-
-    public Disease getDisease() {
-        return disease;
+    public void setTreated(boolean treated) {
+        isTreated = treated;
     }
 
-    public void setDisease(Disease disease) {
-        this.disease = disease;
+    public Disease[] getDiseases() {
+        return diseases;
     }
 
     public MedicalPrescription getMedPrescription() {
@@ -64,8 +64,15 @@ public class Patient extends Person {
 
     public String getAnalysisResults() {
         // Implement your code to print the important variables for diseases to the screen
-        return "Analysis Results:\n Disease: "+disease.getName();
+        return "Analysis Results:\n Disease: "/*+diseases.getName()*/;
         // Print other relevant disease variables
+    }
+
+    public int AddDiseaseToArray(Disease d, int count )
+    {
+        diseases[count] = d;
+        count ++;
+        return count;
     }
 
     public LinkedList<Double> GetDatas()

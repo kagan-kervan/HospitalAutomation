@@ -18,8 +18,7 @@ public class Disease {
     }
 
     private boolean checkImportance(String name) {
-        // Hastalığın önemini kontrol et
-        // ... (Önem kontrolü işlemi)
-        return false;
+      boolean flag = false;
+      return flag;
     }
 }
